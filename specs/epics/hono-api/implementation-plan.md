@@ -3,7 +3,7 @@
 Milestones land in order; each task is one pull request on an
 `orun/HA-n-<slug>` branch with an `Orun-Task: HA-n` trailer.
 
-## HA0 — the spec
+## HA0 — the spec ✅
 
 This doc set, `epic.yaml` and the task contracts, merged to `main`.
 
@@ -11,7 +11,7 @@ This doc set, `epic.yaml` and the task contracts, merged to `main`.
 - the five documents and `epic.yaml` are on `main`
 - `tasks/HA-1.TaskContract.yaml`, `HA-2`, `HA-3` exist
 
-## HA1 — the API on Workers
+## HA1 — the API on Workers ✅
 
 `apps/api` is the upstream `src/index.ts` with the Worker config around it;
 `tests/api` drives the app in-process with `app.request()`.
@@ -22,7 +22,7 @@ This doc set, `epic.yaml` and the task contracts, merged to `main`.
 - `wrangler dev` (via `pnpm --filter @app/api dev`) answers `/` with `Hello Hono!` and an unknown path with 404
 - `wrangler deploy --dry-run --env prod` (what the Orun verify lane runs) resolves `ENVIRONMENT=prod`
 
-## HA2 — ready to instantiate
+## HA2 — ready to instantiate ✅
 
 The README explains the port and how to run, test, preview and deploy it;
 `IMPLEMENTATION-STATUS.md` records what shipped and every departure.
