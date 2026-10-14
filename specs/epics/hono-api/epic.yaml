@@ -1,0 +1,28 @@
+# The epic's declaration. metadata.name equals the directory name; metadata.key
+# is the task-key prefix this epic reserves (HA → HA-1, HA-2, …). Owner, target
+# date and health are the platform's — never written here.
+apiVersion: orun.io/v1
+kind: Epic
+metadata:
+  name: hono-api
+  key: HA
+spec:
+  title: "Vercel's Hono boilerplate as a Cloudflare Worker"
+  summary: "The Vercel Hono framework boilerplate — one Hono app answering `/` with a welcome text — runs natively as a Cloudflare Worker (the app's default export is the Worker's module handler), inside the Cirrus baseline's repository conventions (Orun intent and components, credential-free checks, a gated Orun CI, one epic per repository). It is the Cloudflare-only API port with the shortest path: no adapter and no build beyond wrangler's bundle."
+  state: backlog
+  milestones:
+    - name: "HA0 — the spec"
+      exitCriteria:
+        - "the doc set and the task contracts are on main"
+      tasks: [HA-1]
+    - name: "HA1 — the API on Workers"
+      exitCriteria:
+        - "apps/api is the upstream src/index.ts, bundled and served by wrangler as a plain Worker"
+        - "`pnpm typecheck`, `pnpm lint`, `pnpm test` and `pnpm build` are green on main (Checks)"
+        - "`wrangler dev` answers / with the welcome text and an unknown path with 404"
+      tasks: [HA-2]
+    - name: "HA2 — ready to instantiate"
+      exitCriteria:
+        - "the README says how to run, test, preview and deploy it through Orun"
+        - "the as-built status records every departure from the upstream template"
+      tasks: [HA-3]
