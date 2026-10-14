@@ -1,0 +1,58 @@
+apiVersion: sourceplane.io/v1
+kind: Component
+metadata:
+  name: api
+  description: The Hono API (a plain Cloudflare Worker, per environment)
+spec:
+  type: cloudflare-worker-turbo
+  lifecycle: production
+  owner: platform
+  domain: api
+  path: apps/api
+  subscribe:
+    environments:
+      - name: dev
+        profile: verify
+      - name: stage
+        profile: verify
+        profileRules:
+          - profile: deploy
+            when:
+              triggerRef: github-push-main
+      - name: prod
+        profile: verify
+        profileRules:
+          - profile: deploy
+            when:
+              triggerRef: github-push-main
+  parameters:
+    nodeVersion: "22"
+    pnpmVersion: "10.12.1"
+
+    workspaceDir: ../..
+    appDir: .
+
+    orgName: sourceplane
+    owner: sourceplane
+    repo: hono-api
+
+    turboFilter: "@app/api"
+    # Committed, not rendered: the Worker binds nothing, so there are no
+    # resource IDs to wire. Per-env names come from `--env`: hono-api-api-{stage,prod}.
+    wranglerConfig: wrangler.jsonc
+
+    installCommand: pnpm install --frozen-lockfile
+    buildCommand: pnpm exec turbo run build --filter=@app/api
+    typecheckCommand: pnpm exec turbo run typecheck --filter=@app/api
+
+    dryRunCommand: pnpm exec wrangler deploy --dry-run --config wrangler.jsonc --env prod
+    deployCommand: pnpm exec wrangler deploy --config wrangler.jsonc --env prod
+
+    preDeployCommand: "echo 'No pre-deploy step configured.'"
+    migrationCommand: "echo 'No migrations configured.'"
+    smokeCommand: "echo 'No smoke test configured.'"
+  labels:
+    team: platform
+    layer: runtime
+    surface: api
+    runtime: cloudflare
