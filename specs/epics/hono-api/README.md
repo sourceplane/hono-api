@@ -8,7 +8,7 @@ The upstream code stays the code. The port adds the Worker's config (`wrangler.j
 
 | Field | Value |
 |-------|-------|
-| Status | Draft |
+| Status | ✅ Shipped — HA0–HA2 landed (#1, #2, #3) |
 | Cluster | **HA** (HA0–HA2) |
 | Owner(s) | `apps/api` (the Worker) · `tests/api` (the in-process request tests) |
 | Builds on | `cirrus-baseline` conventions (intent, components, `checks.yml` gate, gated `ci.yml`) and the `cloudflare-worker-turbo` composition its workers deploy with — no bounded context of the fleet is needed |
@@ -16,7 +16,7 @@ The upstream code stays the code. The port adds the Worker's config (`wrangler.j
 | Changes | Adds the Worker config, the monorepo wrapper, tests and the deploy contract; the template's app code is untouched but for the welcome line's link |
 | Decisions locked | (1) A plain Worker (`cloudflare-worker-turbo`), not Pages Functions and not an adapter: Hono's default export is already a Workers module handler. (2) `wrangler.jsonc` is committed, not rendered: the Worker binds nothing, so there is nothing to wire. (3) Per-environment deploys through wrangler `env` sections (`--env stage` / `--env prod`), naming `hono-api-api-{stage,prod}`. (4) No infra root. |
 | Gate | HA1 is the first user-visible rung (the API serves from a Worker). |
-| Shipped as | |
+| Shipped as | `main` after [#3](https://github.com/sourceplane/hono-api/pull/3); verified locally under `wrangler dev` and the `--env prod` dry run, deploy gated until a workspace is linked |
 
 ## Read order
 

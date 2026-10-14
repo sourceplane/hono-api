@@ -9,7 +9,7 @@ metadata:
 spec:
   title: "Vercel's Hono boilerplate as a Cloudflare Worker"
   summary: "The Vercel Hono framework boilerplate — one Hono app answering `/` with a welcome text — runs natively as a Cloudflare Worker (the app's default export is the Worker's module handler), inside the Cirrus baseline's repository conventions (Orun intent and components, credential-free checks, a gated Orun CI, one epic per repository). It is the Cloudflare-only API port with the shortest path: no adapter and no build beyond wrangler's bundle."
-  state: backlog
+  state: completed
   milestones:
     - name: "HA0 — the spec"
       exitCriteria:
