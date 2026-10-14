@@ -1,0 +1,33 @@
+// The Worker binds nothing, so this file is committed as-is (no wiring
+// template). Orun deploys with `--env stage` / `--env prod`; wrangler names
+// the Worker hono-api-api-<env> from the top-level name.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hono-api-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "ENVIRONMENT": "local"
+  },
+  "env": {
+    "dev": {
+      "vars": {
+        "ENVIRONMENT": "dev"
+      }
+    },
+    "stage": {
+      "vars": {
+        "ENVIRONMENT": "stage"
+      }
+    },
+    "prod": {
+      "vars": {
+        "ENVIRONMENT": "prod"
+      }
+    }
+  }
+}
