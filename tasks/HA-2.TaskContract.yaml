@@ -1,5 +1,8 @@
 apiVersion: orun.io/v1
 kind: TaskContract
+metadata:
+  name: HA-2
+  title: "The API on Workers"
 spec:
   goal: The upstream Hono boilerplate runs as a plain Cloudflare Worker with green checks
   affects:

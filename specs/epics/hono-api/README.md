@@ -8,8 +8,8 @@ The upstream code stays the code. The port adds the Worker's config (`wrangler.j
 
 | Field | Value |
 |-------|-------|
-| Status | ✅ Shipped — HA0–HA2 landed (#1, #2, #3) |
-| Cluster | **HA** (HA0–HA2) |
+| Status | 🟡 HA0–HA2 shipped (#1, #2, #3); HA3 — a baseline — in this PR (HA-4), not yet proven by a live bootstrap |
+| Cluster | **HA** (HA0–HA3) |
 | Owner(s) | `apps/api` (the Worker) · `tests/api` (the in-process request tests) |
 | Builds on | `cirrus-baseline` conventions (intent, components, `checks.yml` gate, gated `ci.yml`) and the `cloudflare-worker-turbo` composition its workers deploy with — no bounded context of the fleet is needed |
 | Upstream | [vercel/examples `framework-boilerplates/hono`](https://github.com/vercel/examples/tree/main/framework-boilerplates/hono) |
@@ -32,3 +32,4 @@ The upstream code stays the code. The port adds the Worker's config (`wrangler.j
 | HA0 — the spec | this doc set and the task contracts | merged on `main` |
 | HA1 — the API on Workers | `apps/api` bundled by wrangler, `tests/api`, green checks | `wrangler dev` answers `/` with the welcome text; Checks green |
 | HA2 — ready to instantiate | README, as-built status | a reader can run, test, preview and deploy it |
+| HA3 — a baseline | card, build document, rename, bootstrap tooling, tests | a new API goes from nothing to live in one landing; Baseline CI green |

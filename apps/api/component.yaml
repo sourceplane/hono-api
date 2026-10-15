@@ -9,6 +9,11 @@ spec:
   owner: platform
   domain: api
   path: apps/api
+  # No dependsOn: the API reads no wiring and binds nothing, so there is no
+  # infra component to deploy before it. A component under infra/ that this
+  # Worker comes to read wiring from goes here, `mode: enforced` on
+  # github-push-main and advisory on pull requests, so one convergence applies
+  # it first.
   subscribe:
     environments:
       - name: dev
@@ -32,13 +37,11 @@ spec:
     workspaceDir: ../..
     appDir: .
 
-    orgName: sourceplane
-    owner: sourceplane
-    repo: hono-api
-
     turboFilter: "@app/api"
     # Committed, not rendered: the Worker binds nothing, so there are no
-    # resource IDs to wire. Per-env names come from `--env`: hono-api-api-{stage,prod}.
+    # resource IDs to wire, and the lanes' structure check (`test -f`, before
+    # any build) finds it in a fresh checkout. Per-env names come from `--env`:
+    # hono-api-api-{stage,prod}.
     wranglerConfig: wrangler.jsonc
 
     installCommand: pnpm install --frozen-lockfile
@@ -50,7 +53,15 @@ spec:
 
     preDeployCommand: "echo 'No pre-deploy step configured.'"
     migrationCommand: "echo 'No migrations configured.'"
-    smokeCommand: "echo 'No smoke test configured.'"
+    # Smoke: /health answers `"status":"ok"` for THIS environment — the
+    # environment comes from the `env.<name>` vars the deploy used, so a stale
+    # or wrong Worker fails it. Not the API's name, which is the owner's to
+    # change. The Worker composition exports no deployed URL, so the command
+    # names its own workers.dev URL; ${DEPLOYED_URL} overrides it (a custom
+    # domain, or a local `wrangler dev`). ${ORUN_ENVIRONMENT} the runner sets
+    # for every step. The body is buffered before grep so an early match cannot
+    # SIGPIPE curl.
+    smokeCommand: 'base="${DEPLOYED_URL:-https://hono-api-api-${ORUN_ENVIRONMENT}.your-workers-subdomain.workers.dev}" && health="$(curl -sf --max-time 20 "${base}/health")" && echo "${health}" | grep -q "\"status\":\"ok\"" && echo "${health}" | grep -q "\"environment\":\"${ORUN_ENVIRONMENT}\""'
   labels:
     team: platform
     layer: runtime
