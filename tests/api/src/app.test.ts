@@ -19,3 +19,30 @@ describe("the Hono app (apps/api/src/index.ts)", () => {
     expect(res.status).toBe(404);
   });
 });
+
+describe("GET /health — what the deploy's smoke and the bootstrap's probe read", () => {
+  it("names the API and the environment the Worker runs as", async () => {
+    const { default: app } = await import("@/index");
+    const { API_NAME } = await import("@/identity");
+    // The third argument is the Worker's env: what wrangler's
+    // `env.stage.vars` hands the deployed Worker.
+    const res = await app.request("/health", {}, { ENVIRONMENT: "stage" });
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-type")).toMatch(/^application\/json/);
+    expect(await res.json()).toEqual({ status: "ok", name: API_NAME, environment: "stage" });
+  });
+
+  it("still answers when the Worker has no ENVIRONMENT var", async () => {
+    const { default: app } = await import("@/index");
+    const res = await app.request("/health");
+    expect(res.status).toBe(200);
+    expect(await res.json()).toMatchObject({ status: "ok", environment: "unknown" });
+  });
+});
+
+describe("the API's identity (apps/api/src/identity.ts)", () => {
+  it("names the API", async () => {
+    const { API_NAME } = await import("@/identity");
+    expect(API_NAME.trim()).not.toBe("");
+  });
+});

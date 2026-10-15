@@ -9,7 +9,7 @@ metadata:
 spec:
   title: "Vercel's Hono boilerplate as a Cloudflare Worker"
   summary: "The Vercel Hono framework boilerplate — one Hono app answering `/` with a welcome text — runs natively as a Cloudflare Worker (the app's default export is the Worker's module handler), inside the Cirrus baseline's repository conventions (Orun intent and components, credential-free checks, a gated Orun CI, one epic per repository). It is the Cloudflare-only API port with the shortest path: no adapter and no build beyond wrangler's bundle."
-  state: completed
+  state: started
   milestones:
     - name: "HA0 — the spec"
       exitCriteria:
@@ -26,3 +26,9 @@ spec:
         - "the README says how to run, test, preview and deploy it through Orun"
         - "the as-built status records every departure from the upstream template"
       tasks: [HA-3]
+    - name: "HA3 — a baseline"
+      exitCriteria:
+        - "blueprint.yaml (the console card) and repo-blueprint.yaml (the build) take a new API from nothing to live on stage and prod in ONE landing (01-product), then record it (02-docs)"
+        - "an API built from it carries the API only, renamed throughout to its own name, repository and Worker, through one seam (apps/api/src/identity.ts), and no shipped file names a factory path"
+        - "Baseline CI is green: contract tests, the blueprint read by the pinned orun, the leak gate, the offline bootstrap and the end-to-end tier — the stage lane's planned steps in a staged job tree, the Worker served by wrangler dev and smoke-tested on /health"
+      tasks: [HA-4]

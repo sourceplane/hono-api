@@ -1,6 +1,7 @@
 // The Worker binds nothing, so this file is committed as-is (no wiring
 // template). Orun deploys with `--env stage` / `--env prod`; wrangler names
-// the Worker hono-api-api-<env> from the top-level name.
+// the Worker hono-api-api-<env> from the top-level name. Each environment's
+// ENVIRONMENT var is what GET /health reports.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "hono-api-api",

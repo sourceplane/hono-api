@@ -1,5 +1,8 @@
 apiVersion: orun.io/v1
 kind: TaskContract
+metadata:
+  name: HA-1
+  title: "The spec"
 spec:
   goal: The hono-api epic — declaration, doc set and task contracts — is on main
   affects:
