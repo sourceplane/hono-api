@@ -31,7 +31,7 @@ The README explains the port and how to run, test, preview and deploy it;
 - the README's quick start works from a fresh clone
 - the status file names the PRs and the welcome-line departure
 
-## HA3 — a baseline (HA-4)
+## HA3 — a baseline (HA-4) ✅
 
 `blueprint.yaml`, `repo-blueprint.yaml`, `.baseline/` (identity, task
 contracts, the API's README), `tooling/rebrand`, `tooling/bootstrap`,
@@ -48,6 +48,29 @@ contracts, the API's README), `tooling/rebrand`, `tooling/bootstrap`,
   (`testing/e2e.test.sh`)
 - the status file records what is proven offline and what only a live
   bootstrap can prove
+
+## HA4 — the cirrus standard (HA-5) ✅
+
+Bring the baseline to cirrus-baseline's standard, with nothing about the API
+itself changing.
+
+- **No kiox.** `kiox.yaml`/`kiox.lock` pinned an orun (v2.15.0) that nothing
+  ran: every workflow installs orun itself through `orun-action` with its own
+  `version:`. The files, their two modules and the rebrand's skip entry go.
+- **Component docs.** `tooling/catalog/gen-component-docs.py` writes each
+  component's `docs/overview.md`, `docs/architecture.md` and `docs/runbook.md`
+  from what the component declares, as cirrus-baseline's do; the pages ship
+  with the component. Baseline CI runs it with `--check`.
+- **The context pack.** `ai/context/current.md`, `decisions.md` and
+  `open-risks.md` beside the two pages an API ships with — this repository's
+  own, so no module places them.
+- **Status that agrees with the tags.** HA3 is shipped and tagged.
+
+**Done when**
+- `git grep -i kiox` finds nothing, and the leak gate and the offline
+  bootstrap pass without the two modules
+- the docs check is green in Baseline CI
+- this file, the status file and `epic.yaml` agree
 
 ## After HA3 (outside this repository)
 

@@ -36,7 +36,7 @@ apps/api               the template (src/index.ts) + the Worker config
 tests/api              vitest: app.request("/") in-process — no server, no workerd
 tooling/*              shared tsconfig / eslint / wrangler wiring renderer (unused here: nothing to wire)
 intent.yaml            environments dev (verify) · stage · prod; `work:` points at specs/epics and tasks
-.github/workflows      checks.yml (merge gate) · ci.yml (Orun lanes, gated by the ORUN_CI variable)
+.github/workflows      checks.yml (merge gate) · ci.yml (Orun lanes; plans nothing while intent.yaml names ws_CHANGE_ME)
 ```
 
 ## 4. The build
