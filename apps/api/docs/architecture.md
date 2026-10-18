@@ -2,12 +2,12 @@
 
 Built by the turbo pipeline from `apps/api` and deployed with wrangler.
 
-| | |
-|---|---|
-| Worker config | `apps/api/wrangler.jsonc` |
-| Entry | `src/index.ts` |
-| Compatibility date | `2026-10-01` |
-| Compatibility flags | `nodejs_compat` |
+|                     |                           |
+| ------------------- | ------------------------- |
+| Worker config       | `apps/api/wrangler.jsonc` |
+| Entry               | `src/index.ts`            |
+| Compatibility date  | `2026-10-01`              |
+| Compatibility flags | `nodejs_compat`           |
 
 ## Bindings
 
