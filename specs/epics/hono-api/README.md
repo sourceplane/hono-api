@@ -8,15 +8,15 @@ The upstream code stays the code. The port adds the Worker's config (`wrangler.j
 
 | Field | Value |
 |-------|-------|
-| Status | 🟡 HA0–HA2 shipped (#1, #2, #3); HA3 — a baseline — in this PR (HA-4), not yet proven by a live bootstrap |
-| Cluster | **HA** (HA0–HA3) |
+| Status | ✅ HA0–HA3 shipped (#1–#4), tagged `baseline-v1`; HA4 (the cirrus standard, HA-5) on `main`, not yet tagged. Not yet proven by a live bootstrap (risk HA-F) |
+| Cluster | **HA** (HA0–HA4) |
 | Owner(s) | `apps/api` (the Worker) · `tests/api` (the in-process request tests) |
 | Builds on | `cirrus-baseline` conventions (intent, components, `checks.yml` gate, gated `ci.yml`) and the `cloudflare-worker-turbo` composition its workers deploy with — no bounded context of the fleet is needed |
 | Upstream | [vercel/examples `framework-boilerplates/hono`](https://github.com/vercel/examples/tree/main/framework-boilerplates/hono) |
 | Changes | Adds the Worker config, the monorepo wrapper, tests and the deploy contract; the template's app code is untouched but for the welcome line's link |
 | Decisions locked | (1) A plain Worker (`cloudflare-worker-turbo`), not Pages Functions and not an adapter: Hono's default export is already a Workers module handler. (2) `wrangler.jsonc` is committed, not rendered: the Worker binds nothing, so there is nothing to wire. (3) Per-environment deploys through wrangler `env` sections (`--env stage` / `--env prod`), naming `hono-api-api-{stage,prod}`. (4) No infra root. |
 | Gate | HA1 is the first user-visible rung (the API serves from a Worker). |
-| Shipped as | `main` after [#3](https://github.com/sourceplane/hono-api/pull/3); verified locally under `wrangler dev` and the `--env prod` dry run, deploy gated until a workspace is linked |
+| Shipped as | `baseline-v1` ([#4](https://github.com/sourceplane/hono-api/pull/4)), then HA4 on `main`; proven offline (Baseline CI), deploy gated until a workspace is linked |
 
 ## Read order
 
@@ -33,3 +33,4 @@ The upstream code stays the code. The port adds the Worker's config (`wrangler.j
 | HA1 — the API on Workers | `apps/api` bundled by wrangler, `tests/api`, green checks | `wrangler dev` answers `/` with the welcome text; Checks green |
 | HA2 — ready to instantiate | README, as-built status | a reader can run, test, preview and deploy it |
 | HA3 — a baseline | card, build document, rename, bootstrap tooling, tests | a new API goes from nothing to live in one landing; Baseline CI green |
+| HA4 — the cirrus standard | no kiox, generated component docs, the context pack, status that agrees with the tags | Baseline CI green with the docs check |

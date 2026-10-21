@@ -8,7 +8,8 @@ the code departed from `design.md` or from the upstream template.
 | HA0 — the spec | ✅ Shipped | [#1](https://github.com/sourceplane/hono-api/pull/1) |
 | HA1 — the API on Workers | ✅ Shipped | [#2](https://github.com/sourceplane/hono-api/pull/2) |
 | HA2 — ready to instantiate | ✅ Shipped | [#3](https://github.com/sourceplane/hono-api/pull/3) |
-| HA3 — a baseline | 🟡 In review | this PR (HA-4), to be tagged `baseline-v1` |
+| HA3 — a baseline | ✅ Shipped | [#4](https://github.com/sourceplane/hono-api/pull/4) (HA-4), tagged `baseline-v1` |
+| HA4 — the cirrus standard | ✅ Shipped | HA-5 — on `main` after `baseline-v1`, not yet tagged |
 
 ## Departures from the upstream template
 
@@ -53,6 +54,35 @@ unchanged.
 | `intent.yaml` | terraform `parameterDefaults`; docs pages under `specs/` | neither; docs pages `ai/context/*` | no terraform component; the pages must exist in a product |
 | discovery roots | `apps/`, `tests/` only | `infra/.gitkeep`, `packages/.gitkeep` too | `orun plan` refuses a missing discovery root (`stat infra: no such file or directory`) — `ci.yml` had never planned here |
 | `tasks/HA-1..3` | no `metadata` | `metadata.name` and `title` | `orun work check` (2.79) refused them |
+
+## The cirrus standard (HA4)
+
+Nothing about the API changed. What changed is the baseline around it:
+
+| What | Before | After | Why |
+|---|---|---|---|
+| orun pin | `kiox.yaml` (v2.15.0) + `kiox.lock`, shipped to every API | gone; orun is pinned where it runs, the `orun-action` `version:` in each workflow | nothing ran the kiox pin, and it disagreed with the lanes (v2.78.4) |
+| `root-kiox`, `root-kiox-lock` modules | in `01-product` | removed (`testing/phases.test.sh` follows) | an API is placed with 38 + 6 files: no kiox, plus the docs below |
+| component docs | none | `apps/api/docs/` and `tests/api/docs/` — `overview.md`, `architecture.md`, `runbook.md` | cirrus-baseline documents every component; the workspace Docs library renders `docs/` beside each `component.yaml` |
+| how the docs stay true | — | `tooling/catalog/gen-component-docs.py` derives them from the manifest, the Worker config, Terraform, migrations and package scripts; Baseline CI runs it with `--check` | a hand-written copy of a manifest drifts silently |
+| context pack | `operations.md`, `deployment.md` | plus `current.md`, `decisions.md`, `open-risks.md` | cirrus-baseline's shape; the three new pages are this repository's own and no module places them (the leak gate still allows exactly two) |
+| status | HA3 "in review" | HA3 shipped and tagged `baseline-v1` | the tag existed; the documents had not caught up |
+
+## Verified (HA4)
+
+- `testing/{manifest,phases,coverage,rebrand,retouch,bootstrap-defer}.test.sh`
+  green; `gen-component-docs.py --check` green.
+- `testing/leak.test.sh`: 44 files derived (40 − 2 kiox + 6 docs pages), every
+  one read; ai/context still exactly the two declared pages; the generated
+  pages name no factory path.
+- `testing/placement.test.sh`: 44 files placed, both landings, branded,
+  re-tenanted; the API's own `orun plan` deploys `api` to stage and prod.
+- `pnpm install --frozen-lockfile`, `wire:fixture`, `typecheck`, `lint`,
+  `test` (5 tests), `build` green.
+- `testing/e2e.test.sh` green: the stage lane's planned steps in a staged job
+  tree, `wrangler dev --env stage`, the component's own smoke.
+- `orun task check HA-5` complete.
+- Locally with orun 2.85.0; CI pins v2.58.11 (blueprint) and v2.78.4 (lanes).
 
 ## Verified (HA3)
 
