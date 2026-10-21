@@ -16,3 +16,4 @@ reads in order.
 | 8 | stack-tectonic 0.19.0, not 0.20.0 | The family's one pin: 0.20.0's linked install breaks the Next.js baselines | risk HA-J |
 | 9 | orun is pinned only where it runs (the `orun-action` `version:` in each workflow); no kiox | `kiox.yaml` pinned a version nothing ran | IMPLEMENTATION-STATUS (HA4) |
 | 10 | Component docs are generated from the manifests and checked in CI | A hand-written copy of the dependency graph and bindings drifts silently | `tooling/catalog/gen-component-docs.py` |
+| 11 | `subdomain` is read from the Cloudflare connection (`from: connection.cloudflare.workersSubdomain`), never asked | It belongs to the account like its id and has one right answer; a typed one could only be wrong, and showed up after deploy in the smoke and the probes | `blueprint.yaml`, IMPLEMENTATION-STATUS (HA-6) |
