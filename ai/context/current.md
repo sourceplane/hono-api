@@ -16,8 +16,8 @@ own repository and takes it to live on stage and prod in one landing
 
 | | |
 |---|---|
-| Latest tag | `baseline-v1` (HA3) |
-| On `main` since | HA4 — the cirrus standard (no kiox, generated component docs, this context pack) |
+| Latest tag | `baseline-v2` (HA4 — the cirrus standard: no kiox, generated component docs, this context pack, and the workers.dev subdomain read from the Cloudflare connection instead of asked) |
+| Before it | `baseline-v1` (HA3 — the baseline) |
 | Proven live | No. Everything short of the platform is proven offline in Baseline CI; a live bootstrap from a tag is still to come (risk HA-F) |
 
 ## Where to read
@@ -32,6 +32,5 @@ own repository and takes it to live on stage and prod in one landing
 
 ## Next
 
-1. Bootstrap one API from the next tag against a workspace, and record its
+1. Bootstrap one API from `baseline-v2` against a workspace, and record its
    timings (closes HA-F).
-2. Cut the next `baseline-vN` with `tag.yml` so the registry can pin HA4.
