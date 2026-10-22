@@ -10,6 +10,7 @@ the code departed from `design.md` or from the upstream template.
 | HA2 — ready to instantiate | ✅ Shipped | [#3](https://github.com/sourceplane/hono-api/pull/3) |
 | HA3 — a baseline | ✅ Shipped | [#4](https://github.com/sourceplane/hono-api/pull/4) (HA-4), tagged `baseline-v1` |
 | HA4 — the cirrus standard | ✅ Shipped | [#5](https://github.com/sourceplane/hono-api/pull/5) (HA-5), [#6](https://github.com/sourceplane/hono-api/pull/6) (HA-6), tagged `baseline-v2` |
+| HA5 — the domain is set later | ✅ Shipped | [#7](https://github.com/sourceplane/hono-api/pull/7) (HA-7), tagged `baseline-v3` |
 
 ## Departures from the upstream template
 
@@ -102,6 +103,53 @@ Verified:
   derived, every one read; `testing/placement.test.sh` 44 files placed, both
   landings, the API's own plan deploys `api` to stage and prod.
 - `orun task check HA-6` complete.
+
+## The domain is set later (HA5, HA-7)
+
+The console asked for the API's domain, with help text that said it did not
+need to exist — and nothing in the build needed one: the API answers on
+workers.dev from its first deploy, the deploy's smoke and the phase probes
+read the workers.dev URL, and the one place the repository names the domain
+is `BASE_DOMAIN` in `intent.yaml` (one line per environment: dev, stage,
+prod), plus the README's `DEPLOYED_URL` example. A domain is an owner's step
+after the bootstrap (README, "Custom domain"), so the form no longer asks for
+it.
+
+- `blueprint.yaml` declares no `productdomain` input; the console asks for
+  the API's name alone.
+- `repo-blueprint.yaml`'s `productdomain` is optional, default empty. Nothing
+  else in the build reads it — no hook, probe or `when:` — so an empty value
+  is harmless; `.rebrand/values.json` records `""`. A hand-run build may still
+  pass `--set productdomain=` for an API that already has its domain.
+- `rebrand.mjs` no longer requires it. Empty, it brands the reserved
+  placeholder `<reponame>.example.com` (RFC 2606 — never someone else's
+  domain) where the domain goes, so setting it later is replacing one
+  string; the product README and `ai/context/operations.md` say so.
+- `testing/fixtures/acme.json` carries no domain, so the leak gate and the
+  offline bootstrap exercise exactly what a console build supplies;
+  `testing/rebrand.test.sh` pins the placeholder for an absent and an empty
+  domain, and for the fixture's own slug, whose placeholder
+  `acme-hono-api.example.com` ends in the baseline's `hono-api.example.com`
+  (three passes, unchanged); `baseline.yml`'s blueprint read sets no domain.
+
+Nothing that needs a domain was removed — it waits for one.
+
+Verified:
+
+- `testing/{manifest,phases,coverage,rebrand,retouch,bootstrap-defer}.test.sh`
+  green (rebrand: the three new checks among them; with the previous
+  `rebrand.mjs` all three fail, restored they pass); `gen-component-docs.py
+  --check` green (2 components).
+- At v2.58.11 (the blueprint job's pin): `orun new --status` with no
+  `productdomain` reads the document (`01-product` pending, 44 files);
+  `testing/leak.test.sh` 44 files derived, 44 read; `testing/placement.test.sh`
+  44 files placed, both landings, the API's own plan deploys `api` to stage
+  and prod.
+- The offline bootstrap of the fixture leaves `.rebrand/values.json`
+  `productdomain` empty and `BASE_DOMAIN: acme-hono-api.example.com` in all
+  three environments of the API's `intent.yaml` (and the same string in its
+  README and `operations.md`); no line names `hono-api.example.com` on its own.
+- `orun task check HA-7` complete.
 
 ## Verified (HA4)
 

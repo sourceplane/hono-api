@@ -40,3 +40,9 @@ spec:
         - "every milestone's status row agrees with the tags"
         - "the console card reads subdomain from the Cloudflare connection (from: connection.cloudflare.workersSubdomain), as cirrus-baseline since baseline-v23"
       tasks: [HA-5, HA-6]
+    - name: "HA5 — the domain is set later"
+      exitCriteria:
+        - "the console card asks for no domain: an API goes live on workers.dev, and productdomain is an optional build input that defaults to empty"
+        - "an API built without a domain is branded with the reserved placeholder <reponame>.example.com wherever the domain goes (BASE_DOMAIN), and its README says how an owner sets the real one"
+        - "Baseline CI places, leak-checks and plans an API built with no domain"
+      tasks: [HA-7]
