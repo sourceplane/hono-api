@@ -84,6 +84,14 @@ check "an environment URL in the intent" \
 check "the placeholder domain is the product's domain, not a renamed slug" \
   "$acme" intent.yaml '      BASE_DOMAIN: hono-api.example.com' \
   '      BASE_DOMAIN: acme.dev'
+check "no domain given: the reserved placeholder, for an owner to replace later" \
+  '{"reponame":"acme-api","productname":"Acme API","githuborg":"acme-inc","subdomain":"acme"}' \
+  intent.yaml '      BASE_DOMAIN: hono-api.example.com' \
+  '      BASE_DOMAIN: acme-api.example.com'
+check "an empty domain is no domain" \
+  '{"reponame":"acme-api","productname":"Acme API","productdomain":""}' \
+  intent.yaml '      BASE_DOMAIN: hono-api.example.com' \
+  '      BASE_DOMAIN: acme-api.example.com'
 check "the repo slug" \
   "$acme" package.json '  "name": "hono-api",' \
   '  "name": "acme-api",'
@@ -124,6 +132,10 @@ check "a repo slug ending in the baseline's slug survives three passes" \
 check "…and its Worker name in the smoke URL" \
   "$suffixed" apps/api/component.yaml 'x: https://hono-api-api-${ORUN_ENVIRONMENT}.your-workers-subdomain.workers.dev' \
   'x: https://acme-hono-api-api-${ORUN_ENVIRONMENT}.acme.workers.dev' 3
+check "…and, with no domain, its placeholder (which ends in the baseline's domain)" \
+  '{"reponame":"acme-hono-api","productname":"Acme","githuborg":"acme-inc","subdomain":"acme"}' \
+  intent.yaml '      BASE_DOMAIN: hono-api.example.com' \
+  '      BASE_DOMAIN: acme-hono-api.example.com' 3
 
 # --verify runs in every phase. Without the product's values it cannot tell
 # the product's own identity from a leftover; with them it can. A real

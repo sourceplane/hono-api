@@ -22,7 +22,7 @@ milestones and the as-built status.
 git clone --depth 1 --branch <baseline-tag> https://github.com/sourceplane/hono-api
 cd hono-api
 orun new --blueprint repo-blueprint.yaml --out ~/apis/acme-api --run-hooks --resume \
-  --set reponame=acme-api --set productname="Acme API" --set productdomain=acme.dev \
+  --set reponame=acme-api --set productname="Acme API" \
   --set githuborg=acme-inc --set subdomain=<workers-dev-subdomain>
 ```
 

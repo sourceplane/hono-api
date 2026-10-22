@@ -50,7 +50,7 @@ cd hono-api
 orun new --blueprint repo-blueprint.yaml \
   --out ~/apis/acme-api --run-hooks --resume \
   --set reponame=acme-api --set productname="Acme API" \
-  --set productdomain=acme.dev --set githuborg=acme-inc \
+  --set githuborg=acme-inc \
   --set orunWorkspace=ws_XXXXXXXX \
   --set subdomain=<workers-dev-subdomain>
 ```
@@ -87,9 +87,13 @@ orun new --blueprint repo-blueprint.yaml --out ~/apis/acme-api --run-hooks \
 
 `02-docs` reads the identity back from `.rebrand/values.json` in the placed
 tree, but the blueprint's **required** inputs — `reponame`, `productname`,
-`productdomain`, `githuborg` — are validated before anything runs, so pass
-them every time (a `--values` file is easier). The full guide, one page per
-phase: [docs/phases/README.md](docs/phases/README.md).
+`githuborg` — are validated before anything runs, so pass them every time (a
+`--values` file is easier). The domain is not one of them: the API goes live
+on workers.dev, and `productdomain` defaults to empty, which brands the
+reserved placeholder `<reponame>.example.com` into `BASE_DOMAIN` for an owner
+to replace when they attach a domain (README, "Custom domain"). Pass
+`--set productdomain=` only for an API that already has its domain.
+The full guide, one page per phase: [docs/phases/README.md](docs/phases/README.md).
 
 | flag | what it does |
 |---|---|
@@ -192,7 +196,7 @@ at the tag and refuses the whole catalogue if it 404s.
 | Convergence failed AFTER the PR merged; re-running lands nothing | expected on its own — the files are on main. Re-run the phase (`--phase 01-product`, `--redo 01-product`, or the console's Retry): its `retouch` hook gives the landing a diff and the API redeploys |
 | The API's `intent.yaml` says `workspace: ws_SET_ME` | `orunWorkspace` was empty and the build ran outside a workspace; set it and re-run `01-product` |
 | A bootstrap stopped before `02-docs`; prod no longer waits on stage | the gate is deferred, not dropped: run `02-docs`, or `node tooling/bootstrap/promotion.mjs --restore --file <api>/intent.yaml` |
-| `✕ input "productdomain" is required` | all four required inputs must be set on every invocation, single-phase ones included |
+| `✕ input "productname" is required` | all three required inputs (`reponame`, `productname`, `githuborg`) must be set on every invocation, single-phase ones included |
 | `unknown flag: --phase` or a parse error in the blueprint | the CLI is below the v2.58.11 floor |
 | the convergence reported green, then `verify` got 404 from both URLs | a second workflow ran on the push to main and the watch took its run. Only `ci.yml` runs on a push to main (`testing/coverage.test.sh` holds it); read the CI run on main for the real result |
 | the convergence planned no lanes at all | the merge's push had no `before` to diff against (a first push straight onto an unborn `main`). The landing merges a pull request into orun's `Initial commit`, so its push has one; re-run the phase and its retouch marker re-plans the API |

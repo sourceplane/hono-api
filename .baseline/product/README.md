@@ -100,3 +100,8 @@ environments:
     env:
       DEPLOYED_URL: https://hono-api.example.com
 ```
+
+The repository names the domain in one place, `BASE_DOMAIN` in `intent.yaml`
+(one line per environment), which the API was born with as the reserved
+placeholder `hono-api.example.com` — the example above carries it too.
+Replace it with your domain in the same change that attaches it.

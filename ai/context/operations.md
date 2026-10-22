@@ -96,7 +96,7 @@ orun integrations list --org <ws> --json && orun cloud check --org <ws>
 | deploy a change | merge to `main`; watch the run; failed lanes → `gh run rerun --failed` |
 | redeploy without a change | edit the last line of `apps/api/component.yaml` (`# orun: redeploy <reason> <stamp>`) and merge — it is a deploy trigger, nothing reads it |
 | rename the API | `API_NAME` in `apps/api/src/identity.ts` — what `/health` answers with |
-| serve a custom domain | attach it to the Worker in Cloudflare (README, "Custom domain"); the workers.dev URL keeps answering for the smoke |
+| serve a custom domain | attach it to the Worker in Cloudflare (README, "Custom domain"), then replace the placeholder `hono-api.example.com` in `intent.yaml`'s `BASE_DOMAIN` (every environment) with it; the workers.dev URL keeps answering for the smoke |
 | add a runtime secret | `orun secrets set <KEY> --org <ws> --env <env>`, then declare it in the component's `optionalSecretEnv` and name it in `runtimeSecrets` |
 | headless credentials | `ORUN_TOKEN` (workspace-scoped) + `GITHUB_TOKEN` |
 
