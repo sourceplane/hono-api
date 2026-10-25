@@ -1,7 +1,7 @@
 # hono-api — operating contract (for humans and agents)
 
 This is the standing guide to how this API is deployed and operated.
-Instance facts (live URLs, workspace, secrets inventory) live in
+Instance facts (live URLs, workspace, the secrets it uses) live in
 [deployment.md](deployment.md), rendered from probed reality by the
 bootstrap's `02-docs` phase; this file is the contract that stays true
 between deployments. It is written to give an agent with repository read
@@ -18,14 +18,17 @@ desired-state repo.
   text, `GET /health` answers `{"status":"ok","name":…,"environment":…}`,
   anything else is a 404. It binds nothing — no KV, D1, R2 or service
   binding — and holds no runtime secret.
-- **`tests/api`** — vitest driving the app in-process with `app.request()`,
-  verified on the `dev` rung.
+- **`tests/api`** — vitest driving the app in-process with `app.request()`.
+  A pull request's lanes do not run it (its `quick-check` lane on `dev`
+  installs and checks the package; the Worker's lanes build, type-check and
+  dry-deploy it): run `pnpm typecheck`, `pnpm lint` and `pnpm test` before
+  you push.
 - **`tooling/*`** — shared TypeScript and ESLint configuration, and the
   deploy-time wrangler renderer for workers that take wiring.
 
 Environments: **`stage`** and **`prod`** are deployed; **`dev` is
-verify-only by design** — lanes build, test and dry-run the deploy, nothing
-deploys.
+verify-only by design** — lanes build, type-check and dry-run the deploy,
+nothing deploys.
 
 ## Identity and tenancy
 

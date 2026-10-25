@@ -22,7 +22,7 @@ metadata:
     welcome route and a JSON health check — bundled by wrangler into one
     Cloudflare Worker with no adapter, vitest tests that drive it in-process,
     and CI that deploys it to stage and prod on merge, smoke-tested over HTTP.
-    One provider, one consent, one landing. Live in under ten minutes.
+    One provider, one consent, one landing. Live in about six minutes.
   tags: [api, hono, workers, cloudflare, typescript]
 spec:
   source:
@@ -103,11 +103,12 @@ spec:
       from: connection.cloudflare.workersSubdomain
 
   # ── PREVIEW ONLY. repo-blueprint.yaml's `orun.integrations/reconcile@v1`
-  # hooks mint these, brokered, during 01-product. ──────────────────────────
-  # Transcribed from those hooks' own `keys:` and `template:` values, so
-  # testing/manifest.test.sh compares this list to the document that mints
-  # them. The console renders them read-only: no credential is ever typed,
-  # shown or stored. Keys that already exist are kept.
+  # hook mints these, brokered, during 01-product. ──────────────────────────
+  # Transcribed from that hook's own `secrets:` list (each key and its
+  # `template:`), so testing/manifest.test.sh compares this list to the
+  # document that mints them. The console renders them read-only: no
+  # credential is ever typed, shown or stored. Keys that already exist are
+  # kept.
   secrets:
     - key: CLOUDFLARE_API_TOKEN
       provider: cloudflare
@@ -134,9 +135,9 @@ spec:
     # THE BUILD DOCUMENT. There is no umbrella workflow and no agent brief:
     # every phase is declared in it and orun runs it.
     blueprint: repo-blueprint.yaml
-    # Summed from the phases' expectedMinutes (01-product 6, 02-docs 3). An
-    # estimate until a bootstrap measures it.
-    expectedMinutes: 9
+    # Summed from the phases' expectedMinutes (01-product 5, 02-docs 1). An
+    # estimate until a bootstrap of this shape measures it.
+    expectedMinutes: 6
     tokenChannel: ORUN_TOKEN_FILE   # how a runner hands over its refreshed token
   # The API's URL per environment, as the console links it: the welcome route.
   # The phases' own probes read /health on the same Worker.

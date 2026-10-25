@@ -90,7 +90,7 @@ for p in placed:
 # ── the API's README, not this repository's ───────────────────────────────
 if "README.md" not in placed:
     bad("README.md would not ship")
-for must in (".github/workflows/ci.yml", ".github/workflows/checks.yml",
+for must in (".github/workflows/ci.yml",
              "apps/api/component.yaml", "apps/api/wrangler.jsonc", "apps/api/src/index.ts",
              "apps/api/src/identity.ts", "tests/api/component.yaml", "tests/api/src/app.test.ts",
              "tooling/wire/render.mjs", ".rebrand/values.json", "pnpm-lock.yaml"):
