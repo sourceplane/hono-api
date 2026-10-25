@@ -9,7 +9,7 @@ it to stage, then prod.
 
 <!-- 02-docs:begin -->
 Not recorded yet. The bootstrap's last phase writes the live URLs, the
-workspace and the secrets inventory into
+workspace and the secrets the API uses into
 [ai/context/deployment.md](ai/context/deployment.md); how the API deploys
 and how to operate it is in
 [ai/context/operations.md](ai/context/operations.md).
@@ -63,9 +63,11 @@ against the workspace in `intent.yaml`. The API deploys to `stage`, then to
 `prod` once stage has converged on the same commit; `dev` only verifies. The
 Worker is `hono-api-api-<env>` on your account's workers.dev subdomain, and
 every deploy is smoke-tested over HTTP: `/health` must answer `"status":"ok"`
-for that environment. `checks.yml` runs install, typecheck, lint, test and
-build on every pull request. (A push to `main` runs `ci.yml` alone, which
-builds, tests and deploys.)
+for that environment. A pull request runs the same pipeline's verify lanes:
+the Worker built, type-checked and dry-deployed for each environment, with
+nothing deployed. They do not lint or run the tests, so run `pnpm typecheck`,
+`pnpm lint` and `pnpm test` before you push. (A push to `main` builds,
+deploys and smoke-tests.)
 
 The pipeline holds one credential, GitHub's own `GITHUB_TOKEN`. The
 Cloudflare token and account id are brokered per run from the workspace's

@@ -4,11 +4,17 @@
 # placement.test.sh proves the tree a bootstrap ends with is the right tree.
 # This proves it WORKS, by doing to it what its own pipelines will:
 #
-#   1. at the 01-product landing (the commit its one pull request merges), run
-#      what `checks.yml` runs on that PR — install with the placed lockfile,
-#      render fixtures, typecheck, lint, test, build. That landing WAITS on its
-#      checks, so a product they refuse is a bootstrap that never lands; then
-#      the same at the 02-docs landing, which waits on them too;
+#   1. at the 01-product landing (the commit its one pull request merges),
+#      the landing's own checks — install with the lockfile the API ships,
+#      render fixtures, typecheck, lint, test, build; then the same at the
+#      02-docs landing. Both landings are checked in the box with
+#      `orun validate` and `orun plan` alone (`checks: local`; their PR's CI
+#      on an `orun/BASE-…` branch is `plan` alone, and the convergence on
+#      main builds, deploys and smoke-tests the API), and a later pull
+#      request of the API runs ci.yml's verify lanes, which build, type-check
+#      and dry-deploy the Worker — so THIS is where the lint and the tests run
+#      over a bootstrapped API: before the tag, not after a build has merged
+#      it;
 #   2. the stage lane's own steps, read out of `orun plan` in the product for a
 #      pull request — EVERY `run:` step of the job, in order, exactly as
 #      planned: the install, `verify-worker-structure` (the committed
@@ -65,24 +71,26 @@ sub="$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['subdomain
 export CI=1 WRANGLER_SEND_METRICS=false TURBO_TELEMETRY_DISABLED=1
 free_port() { python3 -c "import socket;s=socket.socket();s.bind(('127.0.0.1',0));print(s.getsockname()[1]);s.close()"; }
 
-# What checks.yml runs, step for step, read out of the workflow the product
-# carries so the two cannot drift: every `run:` of its one job, in order.
+# The landing's own checks, step for step, run here at once on the whole
+# tree. A pull request in the API builds, type-checks and dry-deploys the
+# Worker through ci.yml's lanes; the lint and the tests run here, and by hand
+# before a push.
+LANDING_CHECKS=(
+  "pnpm install --frozen-lockfile"
+  "pnpm run wire:fixture"
+  "pnpm typecheck"
+  "pnpm lint"
+  "pnpm test"
+  "pnpm build"
+)
 checks() { # DIR LOG
   local dir="$1" log="$2" cmd
-  while IFS= read -r cmd; do
+  for cmd in "${LANDING_CHECKS[@]}"; do
     echo "   \$ $cmd" | tee -a "$log"
     if ! (cd "$dir" && bash -c "$cmd") >> "$log" 2>&1; then
       echo "FAIL: \`$cmd\` failed in $dir" >&2; tail -40 "$log" >&2; return 1
     fi
-  done < <(python3 - "$dir/.github/workflows/checks.yml" <<'PY'
-import sys, yaml
-wf = yaml.safe_load(open(sys.argv[1]))
-for job in wf["jobs"].values():
-    for step in job["steps"]:
-        if "run" in step:
-            print(step["run"].strip())
-PY
-)
+  done
 }
 
 echo "── the offline bootstrap (testing/lib/bootstrap.sh)"
@@ -92,8 +100,8 @@ bootstrap_offline "$root" "$tree" "$values" "$scratch/logs" > "$scratch/bootstra
 s00="$(git -C "$tree" rev-parse HEAD~2)"; s01="$(git -C "$tree" rev-parse HEAD~1)"
 echo "   2 phases placed and landed on orun's Initial commit"
 
-# ── 1. the checks each landing waits on ────────────────────────────────────
-echo "── 01-product's landing, under the checks its PR waits on"
+# ── 1. each landing's own checks ───────────────────────────────────────────
+echo "── 01-product's landing: install, the fixture render, typecheck, lint, test, build"
 git -C "$tree" worktree add -q "$scratch/at-01" "$s01"
 checks "$scratch/at-01" "$scratch/checks-01.log"
 git -C "$tree" worktree remove --force "$scratch/at-01"
