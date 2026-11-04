@@ -58,8 +58,11 @@ jobs:
 
   # Tier 1. THE BLUEPRINT, READ AND PLACED BY THE BINARY A BOOTSTRAP RUNS.
   #
-  # Pinned at the bootstrap floor (BOOTSTRAP.md), not the API's lane pin:
-  # every test here reads YAML with PyYAML, which parses anything well-formed;
+  # Pinned at v2.96.0, not the API's lane pin: at or above the bootstrap
+  # floor (v2.88.0, BOOTSTRAP.md), and the first orun that reads a
+  # component's `spec.preview`, so the placement's `orun validate` checks the
+  # API's live preview too. Every test here reads YAML with PyYAML, which
+  # parses anything well-formed;
   # only the pinned orun can say whether the document is one a bootstrap can
   # run. `--status` parses it, validates every hook against the action
   # registry, compiles every `when` and narration template, and writes
@@ -115,7 +118,7 @@ jobs:
   # v2.96.0, above the bootstrap floor (v2.88.0), the first orun that
   # reads `spec.preview`: the offline bootstrap reads the blueprint (its
   # one `secrets` reconcile, its background task set-up, its landings checked
-  # in the box), and the floor is newer than the API's lane pin (v2.78.4),
+  # in the box), and the pin is newer than the API's lane pin (v2.78.4),
   # which is all the lane steps need.
   api:
     runs-on: ubuntu-latest
